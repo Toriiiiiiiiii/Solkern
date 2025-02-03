@@ -36,5 +36,6 @@ void vga_puts(const char *s);
 void vga_scroll(unsigned int amount);
 void vga_clearline(unsigned int y);
 void vga_hexout(unsigned int val);
+void vga_movecursor(unsigned int x, unsigned int y);
 
 #endif // VGA_H

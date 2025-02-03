@@ -15,12 +15,42 @@ const char *exception_msgs[32] = {
     "Non-Maskable Interrupt",
     "Breakpoint",
     "Overflow Error",
-    "Bound Range Exceeded"
+    "Bound Range Exceeded",
+    "Invalid Opcode",
+    "Device Not Available",
+    "Double Fault",
+    "Coprocessor Segment Overrun",
+    "Invalid TSS",
+    "Segment Not Present",
+    "Stack-Segment Fault",
+    "General Protection Fault",
+    "Page Fault",
+    "RESESRVED",
+    "x87 Floating Point Exception",
+    "Alignment Check",
+    "Machine Check",
+    "SIMD Floating Point Exception",
+    "Virtualization Exception",
+    "Control Protection Exception",
+    "RESERVED",
+    "RESERVED",
+    "RESERVED",
+    "RESERVED",
+    "RESERVED",
+    "Hypervisor Injection Exception",
+    "VMM Communication Exception",
+    "Security Exception",
+    "RESERVED",
+    "Triple Fault",
+    "FPU Error Interrupt"
 };
 
 void exception_handler(exception_regs_t* regs) {
     vga_puts("Unhandled Exception: ");
     vga_puts(exception_msgs[regs->interrupt]);
+    vga_puts(" (ISR ");
+    vga_hexout(regs->interrupt);
+    vga_puts(")");
     vga_puts("\n\nRegister Dump:");
 
     vga_puts("\n  |-> eip - ");
@@ -44,7 +74,6 @@ void exception_handler(exception_regs_t* regs) {
     vga_puts("\n\n");
 
     vga_puts("Kernel Panic: System halted.\n");
-
 
     __asm__ volatile("cli; hlt");
     while(1) {}

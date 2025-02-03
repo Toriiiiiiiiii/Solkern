@@ -1,4 +1,5 @@
 #include <vga.h>
+#include <pic.h>
 
 // Basic variables needed for the VGA driver
 static uint8_t *VGA_BASE = (uint8_t *)0xb8000;
@@ -7,12 +8,11 @@ static unsigned int vga_cursor_y;
 
 // Initialise VGA display
 void vga_init() {
-    vga_cursor_x = 0;
-    vga_cursor_y = 0;
+    vga_goto(0, 0);
 
     for(uint32_t x = 0; x < VGA_WIDTH; ++x) {
         for(uint32_t y = 0; y < VGA_HEIGHT; ++y) {
-            vga_setcol(x, y, VGA_WHITE, VGA_BLACK);
+            vga_setcol(x, y, VGA_LIGHT_GREY, VGA_BLACK);
             vga_setchr(x, y, '\0');
         }
     }  
@@ -53,6 +53,8 @@ void vga_putc_noad(char c) {
 void vga_goto(unsigned int x, unsigned int y) {
     vga_cursor_x = (x >= VGA_WIDTH)? VGA_WIDTH - 1 : x;
     vga_cursor_y = (y >= VGA_HEIGHT)? VGA_HEIGHT - 1 : y;
+
+    vga_movecursor(x, y);
 }
 
 // Set the colour of a character cell on screen
@@ -70,6 +72,8 @@ void vga_puts(const char *s) {
         vga_putc(s[index]);
         index++;
     }
+
+    vga_movecursor(vga_cursor_x, vga_cursor_y);
 }
 
 // Scroll vga display by <n> lines
@@ -109,4 +113,13 @@ void vga_hexout(unsigned int val) {
     }
 
     vga_puts(buf);
+}
+
+void vga_movecursor(unsigned int x, unsigned int y) {
+	uint16_t pos = y * VGA_WIDTH + x;
+
+	outb(0x3D4, 0x0F);
+	outb(0x3D5, (uint8_t) (pos & 0xFF));
+	outb(0x3D4, 0x0E);
+	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
