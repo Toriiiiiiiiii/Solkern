@@ -13,7 +13,7 @@ typedef struct
     uint32_t edi, esi, ebp, useless, ebx, edx, ecx, eax;    // pusha
     uint32_t interrupt, error;                              // we push interrupt, error is pushed automatically (or our dummy)
     uint32_t eip, cs, eflags, esp, ss;                      // pushed automatically by CPU
-} __attribute__((packed)) exception_regs_t;
+} __attribute__((packed)) regs_t;
 
 typedef struct {
 	uint16_t    isr_low;      // The lower 16 bits of the ISR's address
@@ -30,8 +30,9 @@ typedef struct {
 
 void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags);
 void idt_init(void);
+void isrs_install();
 
 __attribute__((noreturn))
-void exception_handler(exception_regs_t *);
+void exception_handler(regs_t *);
 
 #endif // IDT_H

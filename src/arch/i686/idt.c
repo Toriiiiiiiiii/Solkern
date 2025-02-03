@@ -45,7 +45,7 @@ const char *exception_msgs[32] = {
     "FPU Error Interrupt"
 };
 
-void exception_handler(exception_regs_t* regs) {
+void exception_handler(regs_t* regs) {
     vga_puts("Unhandled Exception: ");
     vga_puts(exception_msgs[regs->interrupt]);
     vga_puts(" (ISR ");
@@ -90,14 +90,20 @@ void idt_set_descriptor(uint8_t vector, void* isr, uint8_t flags) {
 }
 
 void idt_init() {
+    __asm__ volatile("cli");
     idtr.base = (uintptr_t)&idt[0];
     idtr.limit = (uint16_t)sizeof(idt_entry_t) * IDT_MAX_DESCRIPTORS - 1;
 
-    for (uint8_t vector = 0; vector < 32; vector++) {
-        idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
-        vectors[vector] = true;
-    }
+    memset((char*)idt, 0, sizeof(idt_entry_t) * 256);
 
     __asm__ volatile ("lidt %0" : : "m"(idtr)); // load the new IDT
     __asm__ volatile ("sti"); // set the interrupt flag
+}
+
+void isrs_install() {
+    __asm__ volatile("cli");
+    for (uint8_t vector = 0; vector < 32; vector++) {
+        idt_set_descriptor(vector, isr_stub_table[vector], 0x8E);
+    }
+    __asm__ volatile("sti");
 }

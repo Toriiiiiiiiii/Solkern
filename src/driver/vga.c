@@ -123,3 +123,7 @@ void vga_movecursor(unsigned int x, unsigned int y) {
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
 }
+
+void vga_updatepos() {
+    vga_movecursor(vga_cursor_x, vga_cursor_y);
+}
