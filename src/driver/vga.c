@@ -12,7 +12,7 @@ void vga_init() {
 
     for(uint32_t x = 0; x < VGA_WIDTH; ++x) {
         for(uint32_t y = 0; y < VGA_HEIGHT; ++y) {
-            vga_setcol(x, y, VGA_LIGHT_GREY, VGA_BLACK);
+            vga_setcol(x, y, VGA_WHITE, VGA_BLACK);
             vga_setchr(x, y, '\0');
         }
     }  
