@@ -9,6 +9,7 @@ static unsigned int vga_cursor_y;
 // Initialise VGA display
 void vga_init() {
     vga_goto(0, 0);
+    vga_setcursor(0, 15);
 
     for(uint32_t x = 0; x < VGA_WIDTH; ++x) {
         for(uint32_t y = 0; y < VGA_HEIGHT; ++y) {
@@ -122,6 +123,14 @@ void vga_movecursor(unsigned int x, unsigned int y) {
 	outb(0x3D5, (uint8_t) (pos & 0xFF));
 	outb(0x3D4, 0x0E);
 	outb(0x3D5, (uint8_t) ((pos >> 8) & 0xFF));
+}
+
+void vga_setcursor(uint8_t cursor_start, uint8_t cursor_end) {
+	outb(0x3D4, 0x0A);
+	outb(0x3D5, (inb(0x3D5) & 0xC0) | cursor_start);
+
+	outb(0x3D4, 0x0B);
+	outb(0x3D5, (inb(0x3D5) & 0xE0) | cursor_end);
 }
 
 void vga_updatepos() {

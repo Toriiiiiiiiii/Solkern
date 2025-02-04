@@ -37,6 +37,7 @@ void vga_scroll(unsigned int amount);
 void vga_clearline(unsigned int y);
 void vga_hexout(unsigned int val);
 void vga_movecursor(unsigned int x, unsigned int y);
+void vga_setcursor(uint8_t cursor_start, uint8_t cursor_end);
 void vga_updatepos();
 
 #endif // VGA_H
