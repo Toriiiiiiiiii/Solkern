@@ -3,7 +3,8 @@
 #include <vga.h>
 #include <stdbool.h>
 
-#define KEY_SHIFT 42
+#define KEY_SHIFT 0x2a
+#define KEY_BCKSP 0x0e
 
 static bool shift_pressed = false;
 
@@ -33,12 +34,13 @@ void keyboard_handler(regs_t* regs) {
     unsigned char scancode = inb(0x60);
 
     if(scancode & 0x80) {
-        if((scancode & 0b01111111) == KEY_SHIFT) shift_pressed = false; 
+        if((scancode & 0x7f) == KEY_SHIFT) shift_pressed = false; 
     } else {
-        if((scancode & 0b01111111) == KEY_SHIFT) { 
+        if((scancode & 0x7f) == KEY_SHIFT) { 
             shift_pressed = true;
-        }
-        else {
+        } else if((scancode & 0x7f) == KEY_BCKSP) {
+            vga_backspace();
+        } else {
             vga_putc( shift_pressed? kb_shift[scancode] : kb_noshift[scancode] );
             vga_updatepos();
         }

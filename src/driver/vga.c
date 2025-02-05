@@ -5,15 +5,20 @@
 static uint8_t *VGA_BASE = (uint8_t *)0xb8000;
 static unsigned int vga_cursor_x;
 static unsigned int vga_cursor_y;
+static uint8_t vga_cursor_col;
+
+uint8_t vga_col(uint8_t fore, uint8_t back) {
+    return fore | back << 4;
+}
 
 // Initialise VGA display
 void vga_init() {
     vga_goto(0, 0);
-    vga_setcursor(0, 15);
+    vga_cursor_col = vga_col(VGA_LIGHT_GREY, VGA_BLACK);
 
     for(uint32_t x = 0; x < VGA_WIDTH; ++x) {
         for(uint32_t y = 0; y < VGA_HEIGHT; ++y) {
-            vga_setcol(x, y, VGA_WHITE, VGA_BLACK);
+            vga_setcol(x, y, VGA_LIGHT_GREY, VGA_BLACK);
             vga_setchr(x, y, '\0');
         }
     }  
@@ -32,6 +37,7 @@ void vga_putc(char c) {
     }
 
     VGA_BASE[(vga_cursor_y*2) * VGA_WIDTH + (vga_cursor_x*2)] = c;
+    VGA_BASE[(vga_cursor_y*2) * VGA_WIDTH + (vga_cursor_x*2) + 1] = vga_cursor_col;
 
     vga_cursor_x++;
     if(vga_cursor_x >= VGA_WIDTH) {
@@ -44,6 +50,8 @@ checkline:
         vga_cursor_y = VGA_HEIGHT - 1;
         vga_scroll(1);
     }
+
+    VGA_BASE[(vga_cursor_y*2) * VGA_WIDTH + (vga_cursor_x*2) + 1] = vga_cursor_col;
 }
 
 void vga_putc_noad(char c) {
@@ -135,4 +143,24 @@ void vga_setcursor(uint8_t cursor_start, uint8_t cursor_end) {
 
 void vga_updatepos() {
     vga_movecursor(vga_cursor_x, vga_cursor_y);
+}
+
+void vga_backspace() {
+    vga_cursor_x --;
+
+    if(vga_cursor_x >= VGA_WIDTH) {
+        vga_cursor_x = VGA_WIDTH-1;
+        vga_cursor_y--;
+    }
+    if(vga_cursor_y >= VGA_HEIGHT) {
+        vga_cursor_x = 0;
+        vga_cursor_y = 0;
+    }
+
+    vga_setchr(vga_cursor_x, vga_cursor_y, ' ');
+    vga_updatepos();
+}
+
+void vga_setccol(uint8_t col) {
+    vga_cursor_col = col;
 }

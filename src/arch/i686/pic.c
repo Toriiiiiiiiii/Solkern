@@ -38,7 +38,6 @@ void pic_init() {
 }
 
 void pic_install() {
-    __asm__ volatile("cli");
     pic_init();
 
     idt_set_descriptor(32, irq_stub_0, 0x8E);
@@ -57,8 +56,6 @@ void pic_install() {
     idt_set_descriptor(45, irq_stub_13, 0x8E);
     idt_set_descriptor(46, irq_stub_14, 0x8E);
     idt_set_descriptor(47, irq_stub_15, 0x8E);
-
-    __asm__ volatile("sti");
 }
 
 void outb(uint16_t port, uint8_t val) {

@@ -3,6 +3,8 @@
 #include <pic.h>
 #include <vga.h>
 
+// Install the serial IRQ and set up
+// serial port for transmission.
 int serial_install() {
     outb(PORT + 1, 0x00);
     outb(PORT + 3, 0x80);
@@ -19,24 +21,33 @@ int serial_install() {
     }
 
     outb(PORT + 4, 0x0F);
-    irq_install_handler(4, serial_handler); 
-    outb(PORT + 1, 0x01);
+
+    irq_install_handler(4, serial_handler); // Install IRQ handler 
+    outb(PORT + 1, 0x01); // Enable serial IRQ
     return 0;
 }
 
+// Handle incoming IRQs from serial port
 void serial_handler(regs_t *regs) {
     char serial = inb(PORT);
+
+    // Echo character back to serial port
 	serial_sendchr(serial);
 }
 
+// Send character to serial port
 void serial_sendchr(char c) {
+    // Send newline
     if(c == 13) {
         outb(PORT, '\r');
         outb(PORT, '\n');
     }
+
+    // Output character
     else outb(PORT, c);
 }
 
+// Send string to serial port
 void serial_sendstr(char *s) {
     unsigned long index = 0;
     while(s[index]) {

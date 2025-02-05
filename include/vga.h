@@ -39,5 +39,9 @@ void vga_hexout(unsigned int val);
 void vga_movecursor(unsigned int x, unsigned int y);
 void vga_setcursor(uint8_t cursor_start, uint8_t cursor_end);
 void vga_updatepos();
+void vga_backspace();
+
+uint8_t vga_col(uint8_t fore, uint8_t back);
+void vga_setccol(uint8_t col);
 
 #endif // VGA_H

@@ -35,6 +35,8 @@ _start:
     mov     ss, ax
     jmp     0x08:.setcs
 .setcs:
+    pop     ebx
+    push    ebx
     call    _kmain
     cli
     hlt
