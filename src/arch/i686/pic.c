@@ -1,6 +1,5 @@
-#include <pic.h>
-#include <idt.h>
-#include <vga.h>
+#include "../../../include/pic.h"
+#include "../../../include/idt.h"
 
 static void *handlers[16] = {
     0, 0, 0, 0, 0, 0, 0, 0,

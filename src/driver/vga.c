@@ -1,5 +1,5 @@
-#include <vga.h>
-#include <pic.h>
+#include "../../include/vga.h"
+#include "../../include/pic.h"
 
 // Basic variables needed for the VGA driver
 static uint8_t *VGA_BASE = (uint8_t *)0xb8000;

@@ -1,4 +1,4 @@
-#include <string.h>
+#include "../../include/string.h"
 
 void memcpy(void *dest, void *src, unsigned long n) {
     for(int i = 0; i < n; ++i) {

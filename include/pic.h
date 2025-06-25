@@ -2,7 +2,7 @@
 #define PIC_H
 
 #include <stdint.h>
-#include <idt.h>
+#include "idt.h"
 
 void pic_init();
 void outb(uint16_t port, uint8_t val);

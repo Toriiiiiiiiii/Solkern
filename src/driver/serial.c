@@ -1,7 +1,6 @@
-#include <serial.h>
-#include <idt.h>
-#include <pic.h>
-#include <vga.h>
+#include "../../include/serial.h"
+#include "../../include/idt.h"
+#include "../../include/pic.h"
 
 // Install the serial IRQ and set up
 // serial port for transmission.

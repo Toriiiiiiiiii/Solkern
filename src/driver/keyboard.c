@@ -1,6 +1,6 @@
-#include <keyboard.h>
-#include <pic.h>
-#include <vga.h>
+#include "../../include/keyboard.h"
+#include "../../include/pic.h"
+#include "../../include/vga.h"
 #include <stdbool.h>
 
 #define KEY_SHIFT 0x2a

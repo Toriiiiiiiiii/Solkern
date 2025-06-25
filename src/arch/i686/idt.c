@@ -1,5 +1,5 @@
-#include <idt.h>
-#include <vga.h>
+#include "../../../include/idt.h"
+#include "../../../include/vga.h"
 
 __attribute__((aligned(0x10))) 
 static idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance

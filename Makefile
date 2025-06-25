@@ -8,13 +8,13 @@ cdrom: solkern.elf
 	mkdir -p sysroot/boot/grub
 	cp solkern.elf sysroot/boot/kernel.elf
 	cp grub.cfg sysroot/boot/grub/grub.cfg
-	grub2-mkrescue -o cdrom.iso sysroot
+	grub-mkrescue -o cdrom.iso sysroot
 
 solkern.elf: kernel cpu driver lib
 	$(LD) -T linker.ld -o $@ -ffreestanding -O2 -nostdlib $(wildcard bin/*.o) -lgcc
 
-debug: clean solkern.elf
-	qemu-system-i386 -s -S -kernel solkern.elf
+debug: clean cdrom
+	qemu-system-x86_64 -s -S --cdrom cdrom.iso
 
 clean:
 	rm bin/*
