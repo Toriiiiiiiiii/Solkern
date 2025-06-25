@@ -1,5 +1,6 @@
 #include "../../include/vga.h"
 #include "../../include/pic.h"
+#include "../../include/liballoc.h"
 
 // Basic variables needed for the VGA driver
 static uint8_t *VGA_BASE = (uint8_t *)0xb8000;
@@ -108,14 +109,23 @@ void vga_clearline(unsigned int y) {
     vga_goto(tx, ty);
 }
 
-void vga_hexout(unsigned int val) {
-    char buf[11] = "0x00000000\0";
+void vga_nout(unsigned int val, unsigned int base) {
+    uint32_t n = 0;
+    uint32_t temp = val;
+    while(temp > 0) {
+        n++;
+        temp /= base;
+    }
+
+    char* buf = (char*)malloc(n + 1);
+    buf[n] = '\0';
+
     char hexmap[16] = "0123456789abcdef";
 
-    unsigned int strptr = 9;
+    unsigned int strptr = n-1;
     while(val > 0) {
-        char digit = hexmap[val % 16];
-        val /= 16;
+        char digit = hexmap[val % base];
+        val /= base;
 
         buf[strptr] = digit;
         strptr--;

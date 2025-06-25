@@ -45,10 +45,10 @@ typedef struct {
 
     uint32_t vbe_control_info;
     uint32_t vbe_mode_info;
-    uint32_t vbe_mode;
-    uint32_t vbe_interface_seg;
-    uint32_t vbe_interface_off;
-    uint32_t vbe_interface_len;
+    uint16_t vbe_mode;
+    uint16_t vbe_interface_seg;
+    uint16_t vbe_interface_off;
+    uint16_t vbe_interface_len;
 
     uint64_t framebuffer_addr;
     uint32_t framebuffer_pitch;
