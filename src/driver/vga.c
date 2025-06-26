@@ -112,19 +112,26 @@ void vga_clearline(unsigned int y) {
 void vga_nout(unsigned int val, unsigned int base) {
     uint32_t n = 0;
     uint32_t temp = val;
-    while(temp > 0) {
-        n++;
-        temp /= base;
+
+    if(val == 0) {
+        vga_puts("0");
+        return;
+    }
+    else {
+        while(temp > 0) {
+            n++;
+            temp /= base;
+        }
     }
 
     char* buf = (char*)malloc(n + 1);
     buf[n] = '\0';
 
-    char hexmap[16] = "0123456789abcdef";
+    char charmap[32] = "0123456789abcdefghijklmnopqrstu";
 
     unsigned int strptr = n-1;
     while(val > 0) {
-        char digit = hexmap[val % base];
+        char digit = charmap[val % base];
         val /= base;
 
         buf[strptr] = digit;

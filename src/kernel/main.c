@@ -6,6 +6,7 @@
 #include "../../include/multiboot.h"
 #include "../../include/drives.h"
 #include "../../include/liballoc.h"
+#include "../../include/mmu.h"
 
 void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     vga_init();
@@ -21,6 +22,10 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
 
     vga_puts("   - Initializing Interrupt Request Vectors...\n");
     pic_install();
+
+    vga_puts("   - Enabling paging...\n");
+    setupPageDirectory();
+
     __asm__ volatile("sti");
 
     // Read Multiboot Information
