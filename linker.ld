@@ -45,6 +45,7 @@ SECTIONS
 	{
 		*(COMMON)
 		*(.bss)
+        end_kernel = .;
 	}
 
 	/* The compiler may produce other sections, by default it will put them in
