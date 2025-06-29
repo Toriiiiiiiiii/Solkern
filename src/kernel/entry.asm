@@ -4,7 +4,7 @@ LEN   equ mbheader_end - mbheader_start
 CHECK equ 0x100000000 - (MAGIC + ARCH + LEN)
 
 section .multiboot
-align 4
+align 8
 mbheader_start:
 	dd MAGIC
 	dd ARCH
@@ -16,8 +16,15 @@ mbheader_start:
     dw 0
     dd 12
     dd 7
+    dd 0
 
-    ; Alignment
+    ; FRAMEBUFFER TAG
+    dw 5
+    dw 0
+    dd 20
+    dd 320
+    dd 200
+    dd 32
     dw 0
 
     dd 0

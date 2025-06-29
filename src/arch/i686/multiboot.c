@@ -1,12 +1,13 @@
 #include "../../../include/multiboot.h"
 #include "../../../include/liballoc.h"
 #include "../../../include/vga.h"
+#include "../../../include/serial.h"
 
-mb_tag_cmdline cmdline = {0};
-mb_tag_blname  bootloader_name = {0};
-mb_tag_meminfo mem_info = {0};
-mb_tag_bootdev boot_device = {0};
-mb_tag_vbe     vbe_info = {0};
+mb_tag_cmdline  cmdline = {0};
+mb_tag_blname   bootloader_name = {0};
+mb_tag_meminfo  mem_info = {0};
+mb_tag_bootdev  boot_device = {0};
+mb_tag_framebuf fb_info = {0};
 
 void doParseTags(mb_info_t* ptr) {
     vga_puts("     - INFO: Total MB Info Size = ");
@@ -69,6 +70,8 @@ void doParseTags(mb_info_t* ptr) {
                 break;
 
             case MB_TAG_BOOTDEV:
+                boot_device.type = MB_TAG_BOOTDEV;
+                boot_device.size = tag.size;
                 boot_device.biosdev = *((uint32_t*)(tagptr)+2);
                 boot_device.partition = *((uint32_t*)(tagptr)+3);
                 boot_device.subpartition = *((uint32_t*)(tagptr)+4);
@@ -80,35 +83,33 @@ void doParseTags(mb_info_t* ptr) {
                 vga_puts("\n");
                 break;
 
-            case MB_TAG_VBEINFO:
-                vbe_info.type = MB_TAG_VBEINFO;
-                vbe_info.size = tag.size;
+            case MB_TAG_FBINFO:
+                fb_info.type = MB_TAG_FBINFO;
+                fb_info.size = tag.size;
+                
+                fb_info.framebuffer_addr = *(uint64_t*)(tagptr+8);
+                fb_info.framebuffer_pitch = *((uint32_t*)(tagptr)+4);
+                fb_info.framebuffer_width = *((uint32_t*)(tagptr)+5);
+                fb_info.framebuffer_height = *((uint32_t*)(tagptr)+6);
+                fb_info.framebuffer_bpp = *((uint8_t*)(tagptr)+28);
+                fb_info.framebuffer_type = *((uint8_t*)(tagptr)+29);
+                fb_info.reserved = *((uint8_t*)(tagptr)+30);
 
-                vbe_info.vbe_mode = *((uint16_t*)(tagptr)+4);
-                vbe_info.vbe_interface_seg = *((uint16_t*)(tagptr)+5);
-                vbe_info.vbe_interface_len = *((uint16_t*)(tagptr)+6);
-
-                for(int i = 0; i < 512; ++i) {
-                    vbe_info.vbe_control_info[i] = ((uint8_t*)(tagptr)+7)[i];
+                for(int i = 0; i < 6; ++i) {
+                    fb_info.color_info[i] = ((uint8_t*)tagptr+31)[i];
                 }
 
-                for(int i = 0; i < 256; ++i) {
-                    vbe_info.vbe_control_info[i] = ((uint8_t*)(tagptr)+7+512)[i];
-                }
+                serial_puts("Framebuffer size: ");
+                serial_nout(fb_info.framebuffer_width, 10);
+                serial_puts(" x ");
+                serial_nout(fb_info.framebuffer_height, 10);
+                serial_puts(" @ ");
+                serial_nout(fb_info.framebuffer_bpp, 10);
+                serial_puts("bpp\r\n");
 
-                vga_puts("     - INFO: === VBE TABLE ===\n");
-                vga_puts("       MODE =              ");
-                vga_nout(vbe_info.vbe_mode, 10);
-                vga_puts("\n");
-                vga_puts("       INTERFACE SEGMENT = 0x");
-                vga_nout(vbe_info.vbe_interface_seg, 16);
-                vga_puts("\n");
-                vga_puts("       INTERFACE OFFSET =  0x");
-                vga_nout(vbe_info.vbe_interface_off, 16);
-                vga_puts("\n");
-                vga_puts("       INTERFACE LENGTH =  0x");
-                vga_nout(vbe_info.vbe_interface_len, 16);
-                vga_puts("\n");
+                serial_puts("Framebuffer Type: ");
+                serial_nout(fb_info.framebuffer_type, 10);
+                serial_puts("\r\n");
 
                 break;
 

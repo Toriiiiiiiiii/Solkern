@@ -9,6 +9,7 @@ int serial_install();
 void serial_handler(regs_t *regs);
 
 void serial_sendchr(char c);
-void serial_sendstr(char *str);
+void serial_puts(char *str);
+void serial_nout(unsigned int val, unsigned int base);
 
 #endif // SERIAL_DRIVER_H

@@ -1,6 +1,7 @@
 #include "../../include/serial.h"
 #include "../../include/idt.h"
 #include "../../include/pic.h"
+#include "../../include/liballoc.h"
 
 // Install the serial IRQ and set up
 // serial port for transmission.
@@ -47,10 +48,43 @@ void serial_sendchr(char c) {
 }
 
 // Send string to serial port
-void serial_sendstr(char *s) {
+void serial_puts(char *s) {
     unsigned long index = 0;
     while(s[index]) {
         serial_sendchr(s[index]);
         index++;
     }
+}
+
+void serial_nout(unsigned int val, unsigned int base) {
+    uint32_t n = 0;
+    uint32_t temp = val;
+
+    if(val == 0) {
+        serial_puts("0");
+        return;
+    }
+    else {
+        while(temp > 0) {
+            n++;
+            temp /= base;
+        }
+    }
+
+    char* buf = (char*)malloc(n + 1);
+    buf[n] = '\0';
+
+    char charmap[32] = "0123456789abcdefghijklmnopqrstu";
+
+    unsigned int strptr = n-1;
+    while(val > 0) {
+        char digit = charmap[val % base];
+        val /= base;
+
+        buf[strptr] = digit;
+        strptr--;
+    }
+
+    serial_puts(buf);
+    free(buf);
 }

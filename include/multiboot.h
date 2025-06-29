@@ -19,10 +19,10 @@ typedef struct {
 
 void doParseTags(mb_info_t* ptr);
 
-extern mb_tag_cmdline cmdline;
-extern mb_tag_blname  bootloader_name;
-extern mb_tag_meminfo mem_info;
-extern mb_tag_bootdev boot_device;
-extern mb_tag_vbe     vbe_info;
+extern mb_tag_cmdline  cmdline;
+extern mb_tag_blname   bootloader_name;
+extern mb_tag_meminfo  mem_info;
+extern mb_tag_bootdev  boot_device;
+extern mb_tag_framebuf fb_info;
 
 #endif
