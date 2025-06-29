@@ -1,14 +1,28 @@
-MBALIGN  equ  1 << 0            ; align loaded modules on page boundaries
-MEMINFO  equ  1 << 1            ; provide memory map
-MBFLAGS  equ  MBALIGN | MEMINFO ; this is the Multiboot 'flag' field
-MAGIC    equ  0x1BADB002        ; 'magic number' lets bootloader find the header
-CHECKSUM equ -(MAGIC + MBFLAGS)   ; checksum of above, to prove we are multiboot
+MAGIC equ 0xE85250D6
+ARCH  equ 0
+LEN   equ mbheader_end - mbheader_start
+CHECK equ 0x100000000 - (MAGIC + ARCH + LEN)
 
 section .multiboot
 align 4
+mbheader_start:
 	dd MAGIC
-	dd MBFLAGS
-	dd CHECKSUM
+	dd ARCH
+    dd LEN
+    dd CHECK
+
+    ; INFO REQUEST: VBE Table
+    dw 1
+    dw 0
+    dd 12
+    dd 7
+
+    ; Alignment
+    dw 0
+
+    dd 0
+    dd 8
+mbheader_end:
 
 section .bss
 align 16

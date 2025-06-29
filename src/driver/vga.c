@@ -139,6 +139,7 @@ void vga_nout(unsigned int val, unsigned int base) {
     }
 
     vga_puts(buf);
+    free(buf);
 }
 
 void vga_movecursor(unsigned int x, unsigned int y) {
