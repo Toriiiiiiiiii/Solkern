@@ -1,5 +1,6 @@
 #include "../../../include/idt.h"
 #include "../../../include/vga.h"
+#include "../../../include/serial.h"
 
 __attribute__((aligned(0x10))) 
 static idt_entry_t idt[256]; // Create an array of IDT entries; aligned for performance
@@ -98,6 +99,10 @@ void exception_handler(regs_t* regs) {
 
     vga_setccol( vga_col(VGA_LIGHT_RED, VGA_BLACK) );
     vga_puts("--- Kernel Panic: System halted.\n");
+
+    serial_puts("ERROR : ");
+    serial_puts(exception_msgs[regs->interrupt]);
+    serial_puts("\r\n");
 
     __asm__ volatile("cli; hlt");
     while(1) {}

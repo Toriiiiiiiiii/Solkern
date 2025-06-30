@@ -111,6 +111,12 @@ void doParseTags(mb_info_t* ptr) {
                 serial_nout(fb_info.framebuffer_type, 10);
                 serial_puts("\r\n");
 
+                serial_puts("Framebuffer Address: ");
+                serial_nout(fb_info.framebuffer_addr >> 32, 16);
+                serial_puts(":");
+                serial_nout(fb_info.framebuffer_addr, 16);
+                serial_puts("\r\n");
+
                 break;
 
             default:
