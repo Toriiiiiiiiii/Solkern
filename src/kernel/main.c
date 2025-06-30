@@ -43,7 +43,6 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
 
     }
 
-
     doParseTags(mb_info);
 
     serial_puts("   - Loading basic Keyboard Driver...\r\n");
@@ -63,9 +62,12 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     }
 
     char msg[] = "Hello from pipe!\n";
-    fwrite(0, sizeof(msg), msg);
+    fwrite(1, sizeof(msg), msg);
 
+    char key;
     while(1) {
-        __asm__ volatile("hlt");
+        int n = fread(0, 1, &key);
+
+        if(n) fwrite(1, 1, &key);
     }
 }

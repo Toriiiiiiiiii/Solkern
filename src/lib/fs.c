@@ -23,16 +23,12 @@ int fwrite(uint32_t desc, uint32_t n, void* data) {
     if(!descriptors[desc]) return 1;
 
     fs_node_t *f = getNodeByDescriptor(desc);
-    f->write(n, data);
-
-    return 0;
+    return f->write(n, data);
 }
 
 int fread(uint32_t desc, uint32_t n, void* buf) {
     if(!descriptors[desc]) return 1;
 
     fs_node_t *f = getNodeByDescriptor(desc);
-    f->read(n, buf);
-
-    return 0;
+    return f->read(n, buf);
 }

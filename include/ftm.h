@@ -9,7 +9,7 @@
 extern int ftm_descriptor;
 
 int ftm_install();
-void ftm_write(uint32_t n, void* data);
-void ftm_read(uint32_t n, void* buf);
+int ftm_write(uint32_t n, void* data);
+int ftm_read(uint32_t n, void* buf);
 
 #endif // FTM_H

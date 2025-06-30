@@ -1,7 +1,7 @@
 #include "../../include/pipe.h"
 #include "../../include/liballoc.h"
 
-int mkpipe(const char* path, void (*write)(uint32_t n, void* data), void (*read)(uint32_t n, void* buf)) {
+int mkpipe(const char* path, int (*write)(uint32_t n, void* data), int (*read)(uint32_t n, void* buf)) {
     fs_node_t* node = (fs_node_t*)malloc(sizeof(fs_node_t));
 
     node->path = path;

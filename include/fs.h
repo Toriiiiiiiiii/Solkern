@@ -17,8 +17,8 @@ typedef struct _fs_node_t {
     fs_type_t  type;
     uint32_t   size;
 
-    void (*write)(uint32_t n, void* data);
-    void (*read)(uint32_t n, void* buf);
+    int (*write)(uint32_t n, void* data);
+    int (*read)(uint32_t n, void* buf);
 
     struct _fs_node_t *parent;
     struct _fs_node_t *children;

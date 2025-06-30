@@ -3,6 +3,6 @@
 
 #include "fs.h"
 
-int mkpipe(const char* path, void (*write)(uint32_t n, void* data), void (*read)(uint32_t n, void* buf));
+int mkpipe(const char* path, int (*write)(uint32_t n, void* data), int (*read)(uint32_t n, void* buf));
 
 #endif
