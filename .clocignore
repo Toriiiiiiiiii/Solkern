@@ -1,2 +1,7 @@
 src/lib/liballoc.c
 include/liballoc.h
+
+src/lib/flanterm.c
+src/lib/flanterm-backend-fb.c
+include/flanterm.h
+include/flanterm_backends/*

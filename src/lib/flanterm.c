@@ -23,6 +23,8 @@
  * POSSIBILITY OF SUCH DAMAGE.
  */
 
+#include "../../include/serial.h"
+
 #ifdef __cplusplus
 #error "Please do not compile Flanterm as C++ code! Flanterm should be compiled as C99 or newer."
 #endif

@@ -9,6 +9,7 @@
 #include "../../include/flanterm.h"
 #include "../../include/flanterm_backends/fb.h"
 #include "../../include/liballoc.h"
+#include "../../include/ftm.h"
 
 void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     serial_puts("SOLKERN V0.1\r\n");
@@ -55,30 +56,14 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     }
     __asm__ volatile("sti");
 
-    uint8_t* fb = (uint8_t*)(4096 * 1024);
-    struct flanterm_context *ft_ctx = flanterm_fb_init(
-            NULL, NULL,
-            (uint32_t*)fb, fb_info.framebuffer_width, 
-            fb_info.framebuffer_height, fb_info.framebuffer_pitch,
-            fb_info.color_info[1], fb_info.color_info[0],
-            fb_info.color_info[3], fb_info.color_info[2],
-            fb_info.color_info[5], fb_info.color_info[4],
-            NULL, NULL, NULL,
-            NULL, NULL, NULL,
-            NULL, NULL,
-            0, 0, 1, 0, 0, 0
-    );
+    serial_puts("   - Creating Flanterm Pipe...\r\n");
+    if(ftm_install()) {
+        serial_puts("     - ERROR: Could not initialize flanterm.\r\n");
+        while(1) __asm__ volatile("hlt");
+    }
 
-    char msg[] = "H";
-    flanterm_write(ft_ctx, msg, sizeof(msg));
-
-
-    //for (int y = 0; y < fb_info.framebuffer_height; y++) {
-    //    for (int x = 0; x < fb_info.framebuffer_width; x++) {
-    //        uint32_t* pixel = (uint32_t*)(fb + y * fb_info.framebuffer_pitch + x * 4);
-    //        *pixel = 0x000000FF;
-    //    }
-    //} 
+    char msg[] = "Hello from pipe!\n";
+    fwrite(0, sizeof(msg), msg);
 
     while(1) {
         __asm__ volatile("hlt");

@@ -72,7 +72,7 @@ void doParseTags(mb_info_t* ptr) {
                 fb_info.reserved = *((uint8_t*)(tagptr)+30);
 
                 for(int i = 0; i < 6; ++i) {
-                    fb_info.color_info[i] = ((uint8_t*)tagptr+31)[i];
+                    fb_info.color_info[i] = ((uint8_t*)tagptr+32)[i];
                 }
 
                 serial_puts("Framebuffer size: ");

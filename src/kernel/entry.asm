@@ -24,7 +24,7 @@ mbheader_start:
     dd 20
     dd 640
     dd 400
-    dd 32
+    dd 24
     dw 0
 
     dd 0
@@ -34,7 +34,7 @@ mbheader_end:
 section .bss
 align 16
 
-stack_bottom: resb 16384
+stack_bottom: resb 65535
 stack_top:
 
 section .text
