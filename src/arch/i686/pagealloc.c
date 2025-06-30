@@ -1,7 +1,7 @@
 #include "../../../include/pagealloc.h"
 #include <stdint.h>
 
-#define NPAGES 256
+#define NPAGES 2048
 
 extern uint32_t end_kernel;
 
@@ -35,7 +35,14 @@ void* kalloc_alloc(int n) {
             }
         }
 
-        if(success) return (void*)(first_frame + (index * 4096));
+        if(success) {
+            for(int i = 0; i < n; ++i) {
+                set_frame_status(index + i, 1);
+            }
+
+            return (void*)(first_frame + (index * 4096));
+        }
+
         index++;
     }
 

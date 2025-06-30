@@ -22,3 +22,15 @@ enablePaging:
     mov esp, ebp
     pop ebp
     ret
+
+global flushTLB
+flushTLB:
+    push ebp
+    mov ebp, esp
+
+    mov eax, cr3
+    mov cr3, eax
+
+    mov esp, ebp
+    pop ebp
+    ret

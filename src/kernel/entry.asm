@@ -22,8 +22,8 @@ mbheader_start:
     dw 5
     dw 0
     dd 20
-    dd 320
-    dd 200
+    dd 640
+    dd 400
     dd 32
     dw 0
 

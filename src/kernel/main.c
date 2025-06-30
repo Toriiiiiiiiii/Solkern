@@ -48,25 +48,37 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     serial_puts("   - Loading basic Keyboard Driver...\r\n");
     install_keyboard_driver();
 
+    __asm__ volatile("cli");
+    initTable(1);
+    for(int i = 0; i < (fb_info.framebuffer_pitch * fb_info.framebuffer_height) / 4096; ++i) {
+        setTableAddr(1, i, fb_info.framebuffer_addr + 4096*i);
+    }
+    __asm__ volatile("sti");
 
-//    struct flanterm_context *ft_ctx = flanterm_fb_init(
-//            NULL, NULL,
-//            (uint32_t*)fb_info.framebuffer_addr, fb_info.framebuffer_width, 
-//            fb_info.framebuffer_height, fb_info.framebuffer_pitch,
-//            fb_info.color_info[1], fb_info.color_info[0],
-//            fb_info.color_info[3], fb_info.color_info[2],
-//            fb_info.color_info[5], fb_info.color_info[4],
-//            NULL, NULL, NULL,
-//            NULL, NULL, NULL,
-//            NULL, NULL,
-//            0, 0, 1, 0, 0, 0
-//    );
-//
-//    char msg[] = "Hello, World!\n";
-//    flanterm_write(ft_ctx, msg, sizeof(msg));
+    uint8_t* fb = (uint8_t*)(4096 * 1024);
+    struct flanterm_context *ft_ctx = flanterm_fb_init(
+            NULL, NULL,
+            (uint32_t*)fb, fb_info.framebuffer_width, 
+            fb_info.framebuffer_height, fb_info.framebuffer_pitch,
+            fb_info.color_info[1], fb_info.color_info[0],
+            fb_info.color_info[3], fb_info.color_info[2],
+            fb_info.color_info[5], fb_info.color_info[4],
+            NULL, NULL, NULL,
+            NULL, NULL, NULL,
+            NULL, NULL,
+            0, 0, 1, 0, 0, 0
+    );
 
-    uint32_t* fb = (uint32_t*)fb_info.framebuffer_addr;
-    *fb = 0xffffffff;
+    char msg[] = "H";
+    flanterm_write(ft_ctx, msg, sizeof(msg));
+
+
+    //for (int y = 0; y < fb_info.framebuffer_height; y++) {
+    //    for (int x = 0; x < fb_info.framebuffer_width; x++) {
+    //        uint32_t* pixel = (uint32_t*)(fb + y * fb_info.framebuffer_pitch + x * 4);
+    //        *pixel = 0x000000FF;
+    //    }
+    //} 
 
     while(1) {
         __asm__ volatile("hlt");
