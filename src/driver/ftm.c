@@ -8,7 +8,8 @@ int ftm_descriptor = 0;
 static struct flanterm_context *ft_ctx = NULL;
 
 int ftm_install() {
-    ftm_descriptor = mkpipe("ftm", ftm_write, ftm_read); 
+    ftm_descriptor = mkpipe("dev/ftm", ftm_write, ftm_read); 
+    if(ftm_descriptor == -1) return 1;
 
     uint8_t* fb = (uint8_t*)(4096 * 1024);
 

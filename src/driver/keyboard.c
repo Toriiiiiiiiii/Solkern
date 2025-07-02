@@ -71,7 +71,7 @@ int keyb_read(uint32_t n, void* buf) {
 }
 
 void install_keyboard_driver() { 
-    int desc = mkpipe("kb", keyb_write, keyb_read);
+    int desc = mkpipe("dev/kb", keyb_write, keyb_read);
     irq_install_handler(1, keyboard_handler);
 }
 

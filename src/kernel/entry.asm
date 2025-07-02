@@ -11,13 +11,6 @@ mbheader_start:
     dd LEN
     dd CHECK
 
-    ; INFO REQUEST: VBE Table
-    dw 1
-    dw 0
-    dd 12
-    dd 7
-    dd 0
-
     ; FRAMEBUFFER TAG
     dw 5
     dw 0

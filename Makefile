@@ -1,14 +1,21 @@
 TARGET = i686
 LD = $(TARGET)-elf-gcc
 
-all: cdrom
+all: diskimg
 
-cdrom: solkern.elf
-	rm -rf sysroot/*
-	mkdir -p sysroot/boot/grub
-	cp solkern.elf sysroot/boot/kernel.elf
-	cp grub.cfg sysroot/boot/grub/grub.cfg
-	grub-mkrescue -o cdrom.iso sysroot
+diskimg: solkern.elf
+	dd if=/dev/zero of=disk.img bs=1M count=100
+	printf 'o\nn\np\n1\n\n\nw\n' | fdisk disk.img
+	sudo kpartx -av disk.img
+	sudo mkfs.fat -F32 /dev/mapper/loop0p1
+	sudo mount -t vfat /dev/mapper/loop0p1 sysroot
+	sudo mkdir -p sysroot/boot/solkern
+	sudo cp solkern.elf sysroot/boot/solkern/solkern
+	sudo cp limine.conf sysroot/boot/limine.conf
+	sudo cp /usr/share/limine/limine-bios.sys sysroot/boot/
+	sudo limine bios-install disk.img
+	sudo umount sysroot
+	sudo kpartx -dv disk.img
 
 solkern.elf: kernel cpu driver lib
 	$(LD) -T linker.ld -o $@ -ffreestanding -O2 -nostdlib $(wildcard bin/*.o) -lgcc

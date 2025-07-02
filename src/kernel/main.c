@@ -10,6 +10,7 @@
 #include "../../include/flanterm_backends/fb.h"
 #include "../../include/liballoc.h"
 #include "../../include/ftm.h"
+#include "../../include/string.h"
 
 void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     serial_puts("SOLKERN V0.1\r\n");
@@ -45,6 +46,9 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
 
     doParseTags(mb_info);
 
+    initFSTree();
+    //serialPrintFSTree();
+
     serial_puts("   - Loading basic Keyboard Driver...\r\n");
     install_keyboard_driver();
 
@@ -61,8 +65,19 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
         while(1) __asm__ volatile("hlt");
     }
 
-    char msg[] = "Hello from pipe!\n";
-    fwrite(1, sizeof(msg), msg);
+    printFSTree();
+    fputs(1, "\n");
+
+    char buf[256] = {0};
+    if(!buf) {
+        fputs(1, "ERROR : Could not allocate buffer with malloc().\n");
+        while(1) __asm__ volatile("hlt");
+    }
+
+    buf[0] = 'H';
+    buf[1] = 0;
+    fputs(1, buf );
+    //free(buf);
 
     char key;
     while(1) {
