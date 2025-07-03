@@ -57,6 +57,12 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     for(int i = 0; i < (fb_info.framebuffer_pitch * fb_info.framebuffer_height) / 4096; ++i) {
         setTableAddr(1, i, fb_info.framebuffer_addr + 4096*i);
     }
+
+    for(int table = 2; table < 10; ++table) {
+        for(int i = 0; i < 1024; ++i) {
+            setTableAddr(table, i, 1024*4096 + 4096*(table-2) + 4096*i);
+        }
+    }
     __asm__ volatile("sti");
 
     serial_puts("   - Creating Flanterm Pipe...\r\n");
@@ -68,16 +74,18 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     printFSTree();
     fputs(1, "\n");
 
-    char buf[256] = {0};
-    if(!buf) {
-        fputs(1, "ERROR : Could not allocate buffer with malloc().\n");
-        while(1) __asm__ volatile("hlt");
-    }
+    int *n = malloc(sizeof(int));
+    *n = 10;
 
-    buf[0] = 'H';
-    buf[1] = 0;
-    fputs(1, buf );
-    //free(buf);
+    char buf[10] = {0};
+    utos(*n, 10, buf);
+    fputs(1, buf);
+
+    fputs(1, "\n");
+
+    *n = 12;
+    utos(*n, 10, buf);
+    fputs(1, buf);
 
     char key;
     while(1) {
