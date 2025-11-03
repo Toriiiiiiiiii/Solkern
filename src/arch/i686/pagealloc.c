@@ -19,7 +19,7 @@ void set_frame_status(int frameid, uint8_t s) {
     uint32_t index = frameid / 8;
     uint32_t shift = frameid % 8;
 
-    framemap[index] |= (s & 1) << shift;
+    framemap[index] = (framemap[index] & ~(1 << shift)) | ((s&1) << shift);
 }
 
 void* kalloc_alloc(int n) {

@@ -38,7 +38,9 @@ char *utos(uint32_t val, uint8_t base, char *buf) {
     uint32_t temp = val;
 
     if(val == 0) {
-        return "0";
+        buf[0] = '0';
+        buf[1] = '\0';
+		return buf;
     }
     else {
         while(temp > 0) {
@@ -59,4 +61,6 @@ char *utos(uint32_t val, uint8_t base, char *buf) {
         buf[strptr] = digit;
         strptr--;
     }
+
+	return buf;
 }

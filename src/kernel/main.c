@@ -11,6 +11,8 @@
 #include "../../include/liballoc.h"
 #include "../../include/ftm.h"
 #include "../../include/string.h"
+#include "../../include/io.h"
+#include "../../include/ata.h"
 
 void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     serial_puts("SOLKERN V0.1\r\n");
@@ -74,18 +76,23 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     printFSTree();
     fputs(1, "\n");
 
-    int *n = malloc(sizeof(int));
-    *n = 10;
+	fprintf(1, "Have Master drive: %s\n", (checkForMasterDrive())? "yes" : "no");
+	fprintf(1, "Have Slave drive: %s\n", (checkForSlaveDrive())? "yes" : "no");
 
-    char buf[10] = {0};
-    utos(*n, 10, buf);
-    fputs(1, buf);
+	char bootRecord[1024] = {0};
 
-    fputs(1, "\n");
+	ata_reset();
+	int ret = ata_readSectors(1, 0, 0, bootRecord);
 
-    *n = 12;
-    utos(*n, 10, buf);
-    fputs(1, buf);
+	if(ret) {
+		fprintf(1, "Could not read from disk.\n");
+	}
+
+	for(int x = 0; x < 512; ++x) {
+		fprintf(1, "%x ", (unsigned char)bootRecord[x]);
+	}
+
+	fprintf(1, "\n");
 
     char key;
     while(1) {
