@@ -3,6 +3,7 @@
 #include "../../include/io.h"
 
 int checkDrive(int driveID) {
+	ata_reset();
 	outb(DRIVESELECT, driveID);
 
 	for(int i = SECTORCOUNT; i <= LBA_HI; ++i) {
@@ -18,6 +19,13 @@ int checkDrive(int driveID) {
 	}
 
 	if(inb(LBA_MID) || inb(LBA_HI)) return 0;
+
+	while(!(status & 8) && status & 1) {
+		status = inb(COMMANDIO);
+	}
+
+	if(status & 1) return 0;
+
 	return 1;
 }
 
@@ -41,6 +49,7 @@ void ata_reset() {
 }
 
 int ata_readSectors(int nSectors, int lba, int drive, void* buf) {
+	ata_reset();
 	outb(DRIVESELECT, 0xE0 | drive << 4 | ((lba >> 24) & 0x0f));
 	outb(0x1f1, 0x00);
 	outb(SECTORCOUNT, nSectors);

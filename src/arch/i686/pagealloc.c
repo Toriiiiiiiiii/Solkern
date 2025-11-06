@@ -1,7 +1,9 @@
 #include "../../../include/pagealloc.h"
 #include <stdint.h>
 
-#define NPAGES 1024
+#define NPAGES 1024 * 10
+#define FRAMEBUFFER_TABLE 1024
+#define PAGES_PER_TABLE 1024
 
 extern uint32_t end_kernel;
 
@@ -12,7 +14,7 @@ uint8_t get_frame_status(int frameid) {
     uint32_t shift = frameid % 8;
     uint8_t  byte  = framemap[index];
 
-    return (byte & (1 << shift)) >> shift;
+    return (byte & (1 << shift));
 }
 
 void set_frame_status(int frameid, uint8_t s) {
@@ -22,14 +24,29 @@ void set_frame_status(int frameid, uint8_t s) {
     framemap[index] = (framemap[index] & ~(1 << shift)) | ((s&1) << shift);
 }
 
+int isInFramebuffer(uint32_t i) {
+    uint32_t first_frame = (end_kernel) / 4096 + 1;
+	uint32_t addr = (first_frame + (i * 4096));
+
+	if(addr >= 1024 * 4096 && addr < 2048 * 4096) {
+		return 1;
+	}
+
+	return 0;
+}
+
 void* kalloc_alloc(int n) {
     uint32_t first_frame = (end_kernel) / 4096 + 1;
     uint32_t index = 0;
     while(index < NPAGES) {
+		if(isInFramebuffer(index)) {
+			index++;
+			continue;
+		}
         
         uint8_t success = 1;
         for(int i = 0; i < n; ++i) {
-            if(get_frame_status(index + i)) { 
+            if(get_frame_status(index + i) || isInFramebuffer(index + i)) { 
                 success = 0;
                 break;
             }

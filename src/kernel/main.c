@@ -10,9 +10,15 @@
 #include "../../include/flanterm_backends/fb.h"
 #include "../../include/liballoc.h"
 #include "../../include/ftm.h"
+#include "../../include/fb.h"
 #include "../../include/string.h"
 #include "../../include/io.h"
 #include "../../include/ata.h"
+#include "../../include/fat.h"
+#include "../../include/spirograph.h"
+#include "../../include/pagealloc.h"
+
+extern uint32_t end_kernel;
 
 void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
     serial_puts("SOLKERN V0.1\r\n");
@@ -56,11 +62,13 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
 
     __asm__ volatile("cli");
     initTable(1);
-    for(int i = 0; i < (fb_info.framebuffer_pitch * fb_info.framebuffer_height) / 4096; ++i) {
-        setTableAddr(1, i, fb_info.framebuffer_addr + 4096*i);
+    for(int i = 0; i < (fb_info.framebuffer_pitch * fb_info.framebuffer_height); i += 4096) {
+        setTableAddr(1, i/4096, fb_info.framebuffer_addr + i);
+		set_frame_status(1024 + i/4096, 1);
     }
 
     for(int table = 2; table < 10; ++table) {
+		initTable(table);
         for(int i = 0; i < 1024; ++i) {
             setTableAddr(table, i, 1024*4096 + 4096*(table-2) + 4096*i);
         }
@@ -73,26 +81,34 @@ void _kmain(uint32_t mb_magic, mb_info_t *mb_info) {
         while(1) __asm__ volatile("hlt");
     }
 
+	if(fb_install()) {
+		serial_puts("     - ERROR: Could not initialize Framebuffer driver.\r\n");
+		while(1) __asm__ volatile("hlt");
+	}
+
     printFSTree();
     fputs(1, "\n");
 
-	fprintf(1, "Have Master drive: %s\n", (checkForMasterDrive())? "yes" : "no");
-	fprintf(1, "Have Slave drive: %s\n", (checkForSlaveDrive())? "yes" : "no");
+	//ata_reset();
+	//fprintf(1, "Have Master drive: %s\n", (checkForMasterDrive())? "yes" : "no");
+	//fprintf(1, "Have Slave drive: %s\n", (checkForSlaveDrive())? "yes" : "no");
 
-	char bootRecord[1024] = {0};
+	//fat_header_t hdr = readFatHeader(0);
+	//fwrite(1, 8, &hdr.ident);
+	//fprintf(1, "Read FAT header.\n");
 
-	ata_reset();
-	int ret = ata_readSectors(1, 0, 0, bootRecord);
+	doSpirograph(200, 150, 10, 100, 0.1);
+	//uint32_t* testBuffer = (uint32_t*)malloc(4096);
+	//for(uint32_t i = 0; i < 4096 / sizeof(uint32_t); ++i) {
+	//	testBuffer[i] = 0xface;
+	//}
+	//for(uint32_t i = 0; i < 4096 / sizeof(uint32_t); ++i) {
+	//	if(testBuffer[i] != 0xface) {
+	//		fprintf(1, "%x  %x\n", i, testBuffer[i]);
+	//	}
+	//}
 
-	if(ret) {
-		fprintf(1, "Could not read from disk.\n");
-	}
-
-	for(int x = 0; x < 512; ++x) {
-		fprintf(1, "%x ", (unsigned char)bootRecord[x]);
-	}
-
-	fprintf(1, "\n");
+	fprintf(1, "End Kernel: %x\n", end_kernel);
 
     char key;
     while(1) {
